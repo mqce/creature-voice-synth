@@ -67,5 +67,7 @@ add_executable(creature_voice
 target_link_libraries(creature_voice PRIVATE voice_core imgui_lib glfw miniaudio)
 
 if(WIN32)
+    target_compile_options(creature_voice PRIVATE -finput-charset=UTF-8 -fexec-charset=UTF-8)
+    target_compile_options(voice_core PRIVATE -finput-charset=UTF-8 -fexec-charset=UTF-8)
     target_link_libraries(creature_voice PRIVATE opengl32 gdi32 ole32 uuid winmm)
 endif()

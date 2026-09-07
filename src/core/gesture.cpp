@@ -225,3 +225,25 @@ const char* gesture_kind_name(GestureKind kind) {
     }
     return "?";
 }
+
+const char* gesture_kind_label(GestureKind kind) {
+    switch (kind) {
+    case GestureKind::Query:
+        return "Query / 問いかけ";
+    case GestureKind::Content:
+        return "Content / 満足";
+    case GestureKind::Call:
+        return "Call / 呼びかけ";
+    case GestureKind::Coo:
+        return "Coo / くー";
+    case GestureKind::Sad:
+        return "Sad / 悲しい";
+    case GestureKind::Excited:
+        return "Excited / 興奮";
+    case GestureKind::Chirp:
+        return "Chirp / チープ";
+    case GestureKind::Whine:
+        return "Whine / うなり";
+    }
+    return "?";
+}

@@ -36,3 +36,4 @@ struct GestureScale {
 VocalGesture gesture_template(GestureKind kind);
 VocalGesture instantiate_gesture(GestureKind kind, unsigned& rng, const GestureScale& scale);
 const char* gesture_kind_name(GestureKind kind);
+const char* gesture_kind_label(GestureKind kind);

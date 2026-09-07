@@ -220,7 +220,7 @@ int main(int argc, char** argv) {
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
-    GLFWwindow* window = glfwCreateWindow(520, 600, "Creature Voice", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(560, 640, "Creature Voice", nullptr, nullptr);
     if (!window) {
         std::fprintf(stderr, "glfwCreateWindow failed\n");
         glfwTerminate();
@@ -232,6 +232,28 @@ int main(int argc, char** argv) {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGui::StyleColorsDark();
+    {
+        ImGuiIO& io = ImGui::GetIO();
+        ImFontConfig font_cfg;
+        font_cfg.OversampleH = 1;
+        font_cfg.OversampleV = 1;
+        font_cfg.PixelSnapH = true;
+        const char* font_paths[] = {
+            "C:\\Windows\\Fonts\\meiryo.ttc",
+            "C:\\Windows\\Fonts\\YuGothM.ttc",
+            "C:\\Windows\\Fonts\\msgothic.ttc",
+        };
+        bool font_ok = false;
+        for (const char* path : font_paths) {
+            if (io.Fonts->AddFontFromFileTTF(path, 18.0f, &font_cfg, io.Fonts->GetGlyphRangesJapanese())) {
+                font_ok = true;
+                break;
+            }
+        }
+        if (!font_ok) {
+            io.Fonts->AddFontDefault();
+        }
+    }
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 330");
 
@@ -291,51 +313,51 @@ int main(int argc, char** argv) {
         ImGui::Begin("Creature Voice", nullptr,
                      ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoMove);
 
-        ImGui::TextUnformatted("Emotion");
-        ImGui::SliderFloat("Valence", &emotion.valence, -1.f, 1.f, "%.2f");
-        ImGui::SliderFloat("Arousal", &emotion.arousal, 0.f, 1.f, "%.2f");
-        ImGui::SliderFloat("Affection", &emotion.affection, 0.f, 1.f, "%.2f");
-        ImGui::SliderFloat("Curiosity", &emotion.curiosity, 0.f, 1.f, "%.2f");
-        ImGui::SliderFloat("Fear", &emotion.fear, 0.f, 1.f, "%.2f");
+        ImGui::TextUnformatted("Emotion / 感情");
+        ImGui::SliderFloat("Valence / 快不快", &emotion.valence, -1.f, 1.f, "%.2f");
+        ImGui::SliderFloat("Arousal / 覚醒", &emotion.arousal, 0.f, 1.f, "%.2f");
+        ImGui::SliderFloat("Affection / 愛情", &emotion.affection, 0.f, 1.f, "%.2f");
+        ImGui::SliderFloat("Curiosity / 好奇心", &emotion.curiosity, 0.f, 1.f, "%.2f");
+        ImGui::SliderFloat("Fear / 恐れ", &emotion.fear, 0.f, 1.f, "%.2f");
 
         const MappedGesture mapped = map_emotion(emotion);
-        ImGui::Text("Speak as %s", gesture_kind_name(mapped.kind));
-        if (ImGui::Button("Speak", ImVec2(-1.f, 0.f))) {
+        ImGui::Text("Speak as / 発声予定: %s", gesture_kind_label(mapped.kind));
+        if (ImGui::Button("Speak / 話す", ImVec2(-1.f, 0.f))) {
             audio.mode.store(static_cast<int>(AppMode::Gesture), std::memory_order_release);
             drone_mode = false;
             player.trigger_emotion(emotion);
-            status = std::string("spoke ") + gesture_kind_name(mapped.kind);
+            status = std::string("spoke / 発声: ") + gesture_kind_label(mapped.kind);
         }
 
         ImGui::Separator();
-        ImGui::TextUnformatted("Gestures");
+        ImGui::TextUnformatted("Gestures / 発声ジェスチャー");
         for (int i = 0; i < 8; ++i) {
             if (i % 4 != 0) {
                 ImGui::SameLine();
             }
-            if (ImGui::Button(gesture_kind_name(kinds[i]), ImVec2(110.f, 0.f))) {
+            if (ImGui::Button(gesture_kind_label(kinds[i]), ImVec2(120.f, 0.f))) {
                 audio.mode.store(static_cast<int>(AppMode::Gesture), std::memory_order_release);
                 drone_mode = false;
                 player.trigger_kind(kinds[i]);
-                status = std::string("played ") + gesture_kind_name(kinds[i]);
+                status = std::string("played / 再生: ") + gesture_kind_label(kinds[i]);
             }
         }
 
-        if (ImGui::Button("Write utterance WAV")) {
+        if (ImGui::Button("Write utterance WAV / WAV書き出し")) {
             VoiceEngine offline(static_cast<float>(kSampleRate));
             GesturePlayer offline_player(static_cast<float>(kSampleRate));
             offline_player.trigger_emotion(emotion);
             std::vector<float> buf(static_cast<std::size_t>(kSampleRate));
             render_player(offline, offline_player, buf.data(), kSampleRate);
             if (write_wav_s16("creature_voice.wav", buf.data(), kSampleRate, kSampleRate)) {
-                status = "wrote creature_voice.wav";
+                status = "wrote / 書き出し: creature_voice.wav";
             } else {
-                status = "failed to write wav";
+                status = "failed to write wav / 書き出し失敗";
             }
         }
 
-        if (ImGui::CollapsingHeader("Drone")) {
-            if (ImGui::Checkbox("Continuous tone", &drone_mode)) {
+        if (ImGui::CollapsingHeader("Drone / 連続音")) {
+            if (ImGui::Checkbox("Continuous tone / 連続再生", &drone_mode)) {
                 audio.mode.store(static_cast<int>(drone_mode ? AppMode::Drone : AppMode::Gesture),
                                  std::memory_order_release);
                 if (drone_mode) {
@@ -344,17 +366,17 @@ int main(int argc, char** argv) {
                     engine.set_playing(playing);
                 }
             }
-            if (ImGui::Checkbox("Playing", &playing)) {
+            if (ImGui::Checkbox("Playing / 再生中", &playing)) {
                 engine.set_playing(playing);
             }
             ImGui::BeginDisabled(!drone_mode);
-            ImGui::SliderFloat("Pitch", &drone_params.pitch_hz, 180.f, 1100.f, "%.0f Hz");
-            ImGui::SliderFloat("Breath", &drone_params.breath, 0.f, 1.f, "%.2f");
-            ImGui::SliderFloat("Mouth", &drone_params.mouth, 0.f, 1.f, "%.2f");
-            ImGui::SliderFloat("Jitter", &drone_params.jitter, 0.f, 1.f, "%.2f");
-            ImGui::SliderFloat("Open", &drone_params.open_quotient, 0.45f, 0.88f, "%.2f");
-            ImGui::SliderFloat("Nasal", &drone_params.nasality, 0.f, 1.f, "%.2f");
-            ImGui::SliderFloat("Rough", &drone_params.roughness, 0.f, 1.f, "%.2f");
+            ImGui::SliderFloat("Pitch / 高さ", &drone_params.pitch_hz, 180.f, 1100.f, "%.0f Hz");
+            ImGui::SliderFloat("Breath / 息", &drone_params.breath, 0.f, 1.f, "%.2f");
+            ImGui::SliderFloat("Mouth / 口", &drone_params.mouth, 0.f, 1.f, "%.2f");
+            ImGui::SliderFloat("Jitter / 揺らぎ", &drone_params.jitter, 0.f, 1.f, "%.2f");
+            ImGui::SliderFloat("Open / 声門開度", &drone_params.open_quotient, 0.45f, 0.88f, "%.2f");
+            ImGui::SliderFloat("Nasal / 鼻腔", &drone_params.nasality, 0.f, 1.f, "%.2f");
+            ImGui::SliderFloat("Rough / 粗さ", &drone_params.roughness, 0.f, 1.f, "%.2f");
             ImGui::EndDisabled();
             if (drone_mode) {
                 drone_params.amplitude = 1.f;
