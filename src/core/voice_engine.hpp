@@ -21,8 +21,7 @@ public:
     float sample_rate() const { return sample_rate_; }
 
 private:
-    void map_mouth(float mouth, float& f1, float& f2, float& f3, float& f4) const;
-    void maybe_update_formants(float mouth, float nasality);
+    void maybe_update_formants(float f1, float f2, float f3, float nasality);
 
     float sample_rate_ = 24000.f;
     int frame_len_ = 192;
@@ -37,7 +36,9 @@ private:
     CascadeFormants formants_;
     ParamSmoother pitch_sm_;
     ParamSmoother breath_sm_;
-    ParamSmoother mouth_sm_;
+    ParamSmoother f1_sm_;
+    ParamSmoother f2_sm_;
+    ParamSmoother f3_sm_;
     ParamSmoother jitter_sm_;
     ParamSmoother amp_sm_;
     ParamSmoother oq_sm_;

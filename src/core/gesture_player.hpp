@@ -13,6 +13,7 @@ public:
     void trigger(const VocalGesture& gesture);
     void trigger_kind(GestureKind kind);
     void trigger_emotion(const Emotion& emotion);
+    void trigger_diphthong(VowelKind from, VowelKind to);
 
     VoiceParams next_params();
 

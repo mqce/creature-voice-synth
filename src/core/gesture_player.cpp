@@ -22,6 +22,10 @@ void GesturePlayer::trigger_emotion(const Emotion& emotion) {
     trigger(instantiate_gesture(mapped.kind, rng_, mapped.scale));
 }
 
+void GesturePlayer::trigger_diphthong(VowelKind from, VowelKind to) {
+    trigger(make_diphthong_gesture(from, to, rng_));
+}
+
 VoiceParams GesturePlayer::next_params() {
     const unsigned serial = serial_.load(std::memory_order_acquire);
     if (serial != last_serial_) {
@@ -38,9 +42,15 @@ VoiceParams GesturePlayer::next_params() {
     }
 
     const float u = (length_ <= 1) ? 1.f : static_cast<float>(pos_) / static_cast<float>(length_ - 1);
+    const float mix = current_.vowel_mix.eval(u);
+    const VowelFormants vf = mix_vowels(vowel_formants(current_.vowel_from),
+                                        vowel_formants(current_.vowel_to), mix);
+
     VoiceParams p;
     p.pitch_hz = current_.pitch.eval(u);
-    p.mouth = current_.mouth.eval(u);
+    p.f1 = std::clamp(vf.f1 + current_.f1_bias, 280.f, 1400.f);
+    p.f2 = std::clamp(vf.f2 + current_.f2_bias, 700.f, 4200.f);
+    p.f3 = vf.f3;
     p.amplitude = current_.amplitude.eval(u);
     p.breath = current_.breath.eval(u);
     p.jitter = current_.jitter;

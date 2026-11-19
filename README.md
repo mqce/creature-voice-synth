@@ -21,7 +21,7 @@ cmake --build build
 ## 使い方
 
 - **Speak** — 感情スライダーから種類を選んで 1 声出す
-- **Gestures** — Query / Content / Call / Coo / Sad / Excited / Chirp / Whine
+- **Gestures** — 問いかけ / 満足 / 呼びかけ / 甘え / 悲しい / 興奮 / びっくり / 不安
 - **Drone** — 連続音。Pitch / Breath / Mouth / Jitter / Open / Nasal / Rough
 
 同じボタンでも高さ・長さ・口が少しずつ変わります。発声後は無音に戻ります。

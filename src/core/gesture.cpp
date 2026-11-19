@@ -69,8 +69,10 @@ VocalGesture gesture_template(GestureKind kind) {
         g.duration = 0.27f;
         g.pitch = make_curve({0.f, 546.f, 0.35f, 666.f, 1.f, 851.f});
         g.amplitude = make_curve({0.f, 0.f, 0.12f, 1.f, 0.72f, 0.85f, 1.f, 0.f});
-        g.mouth = make_curve({0.f, 0.28f, 1.f, 0.52f});
         g.breath = make_curve({0.f, 0.13f, 1.f, 0.13f});
+        g.vowel_from = VowelKind::E;
+        g.vowel_to = VowelKind::I;
+        g.vowel_mix = make_curve({0.f, 0.f, 0.25f, 0.10f, 0.75f, 0.90f, 1.f, 1.f});
         g.jitter = 0.26f;
         g.open_quotient = 0.72f;
         g.nasality = 0.14f;
@@ -80,8 +82,10 @@ VocalGesture gesture_template(GestureKind kind) {
         g.duration = 0.17f;
         g.pitch = make_curve({0.f, 599.f, 0.40f, 635.f, 1.f, 586.f});
         g.amplitude = make_curve({0.f, 0.f, 0.15f, 1.f, 0.70f, 0.80f, 1.f, 0.f});
-        g.mouth = make_curve({0.f, 0.38f, 1.f, 0.44f});
         g.breath = make_curve({0.f, 0.11f, 1.f, 0.11f});
+        g.vowel_from = VowelKind::A;
+        g.vowel_to = VowelKind::A;
+        g.vowel_mix = make_curve({0.f, 0.f, 1.f, 0.f});
         g.jitter = 0.20f;
         g.open_quotient = 0.72f;
         g.nasality = 0.10f;
@@ -91,8 +95,10 @@ VocalGesture gesture_template(GestureKind kind) {
         g.duration = 0.27f;
         g.pitch = make_curve({0.f, 540.f, 0.20f, 702.f, 0.80f, 688.f, 1.f, 648.f});
         g.amplitude = make_curve({0.f, 0.f, 0.10f, 1.f, 0.85f, 0.90f, 1.f, 0.f});
-        g.mouth = make_curve({0.f, 0.36f, 0.50f, 0.52f, 1.f, 0.42f});
         g.breath = make_curve({0.f, 0.14f, 1.f, 0.14f});
+        g.vowel_from = VowelKind::A;
+        g.vowel_to = VowelKind::U;
+        g.vowel_mix = make_curve({0.f, 0.f, 0.22f, 0.08f, 0.55f, 0.70f, 1.f, 1.f});
         g.jitter = 0.28f;
         g.open_quotient = 0.71f;
         g.nasality = 0.10f;
@@ -102,8 +108,10 @@ VocalGesture gesture_template(GestureKind kind) {
         g.duration = 0.30f;
         g.pitch = make_curve({0.f, 493.f, 0.50f, 483.f, 1.f, 473.f});
         g.amplitude = make_curve({0.f, 0.f, 0.18f, 0.85f, 0.80f, 0.70f, 1.f, 0.f});
-        g.mouth = make_curve({0.f, 0.22f, 1.f, 0.28f});
         g.breath = make_curve({0.f, 0.16f, 0.70f, 0.22f, 1.f, 0.36f});
+        g.vowel_from = VowelKind::U;
+        g.vowel_to = VowelKind::O;
+        g.vowel_mix = make_curve({0.f, 0.f, 0.35f, 0.15f, 1.f, 1.f});
         g.jitter = 0.16f;
         g.open_quotient = 0.78f;
         g.nasality = 0.29f;
@@ -113,8 +121,10 @@ VocalGesture gesture_template(GestureKind kind) {
         g.duration = 0.36f;
         g.pitch = make_curve({0.f, 435.f, 0.45f, 400.f, 1.f, 370.f});
         g.amplitude = make_curve({0.f, 0.f, 0.20f, 0.75f, 0.75f, 0.55f, 1.f, 0.f});
-        g.mouth = make_curve({0.f, 0.24f, 1.f, 0.20f});
         g.breath = make_curve({0.f, 0.26f, 0.65f, 0.34f, 1.f, 0.48f});
+        g.vowel_from = VowelKind::A;
+        g.vowel_to = VowelKind::O;
+        g.vowel_mix = make_curve({0.f, 0.f, 0.30f, 0.12f, 0.80f, 0.88f, 1.f, 1.f});
         g.jitter = 0.22f;
         g.open_quotient = 0.78f;
         g.nasality = 0.20f;
@@ -124,8 +134,10 @@ VocalGesture gesture_template(GestureKind kind) {
         g.duration = 0.15f;
         g.pitch = make_curve({0.f, 716.f, 0.35f, 892.f, 1.f, 974.f});
         g.amplitude = make_curve({0.f, 0.f, 0.08f, 1.f, 0.55f, 0.90f, 1.f, 0.f});
-        g.mouth = make_curve({0.f, 0.45f, 1.f, 0.58f});
         g.breath = make_curve({0.f, 0.16f, 1.f, 0.18f});
+        g.vowel_from = VowelKind::A;
+        g.vowel_to = VowelKind::I;
+        g.vowel_mix = make_curve({0.f, 0.f, 0.20f, 0.15f, 1.f, 1.f});
         g.jitter = 0.42f;
         g.open_quotient = 0.65f;
         g.nasality = 0.08f;
@@ -135,8 +147,10 @@ VocalGesture gesture_template(GestureKind kind) {
         g.duration = 0.11f;
         g.pitch = make_curve({0.f, 710.f, 1.f, 1056.f});
         g.amplitude = make_curve({0.f, 0.f, 0.10f, 1.f, 0.55f, 0.70f, 1.f, 0.f});
-        g.mouth = make_curve({0.f, 0.36f, 1.f, 0.55f});
         g.breath = make_curve({0.f, 0.16f, 1.f, 0.16f});
+        g.vowel_from = VowelKind::I;
+        g.vowel_to = VowelKind::I;
+        g.vowel_mix = make_curve({0.f, 0.f, 1.f, 0.f});
         g.jitter = 0.34f;
         g.open_quotient = 0.70f;
         g.nasality = 0.10f;
@@ -146,8 +160,10 @@ VocalGesture gesture_template(GestureKind kind) {
         g.duration = 0.39f;
         g.pitch = make_curve({0.f, 756.f, 0.30f, 675.f, 1.f, 432.f});
         g.amplitude = make_curve({0.f, 0.f, 0.12f, 0.80f, 0.70f, 0.60f, 1.f, 0.f});
-        g.mouth = make_curve({0.f, 0.32f, 1.f, 0.22f});
         g.breath = make_curve({0.f, 0.28f, 0.60f, 0.38f, 1.f, 0.52f});
+        g.vowel_from = VowelKind::I;
+        g.vowel_to = VowelKind::E;
+        g.vowel_mix = make_curve({0.f, 0.f, 0.28f, 0.10f, 0.82f, 0.92f, 1.f, 1.f});
         g.jitter = 0.38f;
         g.open_quotient = 0.79f;
         g.nasality = 0.16f;
@@ -164,7 +180,6 @@ VocalGesture instantiate_gesture(GestureKind kind, unsigned& rng, const GestureS
     const float f0_r = lerp(0.92f, 1.13f, rand01(rng));
     const float depth = lerp(0.58f, 1.58f, rand01(rng));
     const float mouth_r = lerp(-0.18f, 0.18f, rand01(rng));
-    const float mouth_span = lerp(0.55f, 1.45f, rand01(rng));
     const float breath_r = lerp(-0.14f, 0.22f, rand01(rng));
     const float jitter_r = lerp(-0.12f, 0.28f, rand01(rng));
     const float amp_peak = lerp(0.72f, 1.0f, rand01(rng));
@@ -173,14 +188,18 @@ VocalGesture instantiate_gesture(GestureKind kind, unsigned& rng, const GestureS
 
     warp_interior_times(g.pitch, rng, 0.16f);
     warp_interior_times(g.amplitude, rng, 0.14f);
-    warp_interior_times(g.mouth, rng, 0.18f);
 
     scale_contour_depth(g.pitch, depth, 380.f, 1300.f);
     jitter_interior_values(g.pitch, rng, 40.f, 380.f, 1300.f, true);
     scale_curve(g.pitch, f0_r * scale.pitch_scale, 0.f, 380.f, 1300.f);
 
-    scale_contour_depth(g.mouth, mouth_span, 0.f, 1.f);
-    scale_curve(g.mouth, 1.f, mouth_r + scale.mouth_bias, 0.f, 1.f);
+    if (g.vowel_from != g.vowel_to) {
+        warp_interior_times(g.vowel_mix, rng, 0.16f);
+        scale_contour_depth(g.vowel_mix, lerp(0.78f, 1.12f, rand01(rng)), 0.f, 1.f);
+        scale_curve(g.vowel_mix, 1.f, lerp(-0.06f, 0.06f, rand01(rng)), 0.f, 1.f);
+    }
+    g.f1_bias = (mouth_r + scale.mouth_bias) * 140.f;
+    g.f2_bias = lerp(-90.f, 90.f, rand01(rng));
 
     // Keep attack/release at 0; vary how loud the body is.
     for (int i = 1; i < g.amplitude.n - 1; ++i) {
@@ -201,6 +220,20 @@ VocalGesture instantiate_gesture(GestureKind kind, unsigned& rng, const GestureS
     } else {
         g.roughness = 0.f;
     }
+    return g;
+}
+
+VocalGesture make_diphthong_gesture(VowelKind from, VowelKind to, unsigned& rng) {
+    VocalGesture g = instantiate_gesture(GestureKind::Call, rng, GestureScale{});
+    g.vowel_from = from;
+    g.vowel_to = to;
+    if (from == to) {
+        g.vowel_mix = make_curve({0.f, 0.f, 1.f, 0.f});
+    } else {
+        g.vowel_mix = make_curve({0.f, 0.f, 0.22f, 0.08f, 0.78f, 0.92f, 1.f, 1.f});
+    }
+    g.f1_bias = 0.f;
+    g.f2_bias = 0.f;
     return g;
 }
 
@@ -235,15 +268,15 @@ const char* gesture_kind_label(GestureKind kind) {
     case GestureKind::Call:
         return "Call / 呼びかけ";
     case GestureKind::Coo:
-        return "Coo / くー";
+        return "Coo / 甘え";
     case GestureKind::Sad:
         return "Sad / 悲しい";
     case GestureKind::Excited:
         return "Excited / 興奮";
     case GestureKind::Chirp:
-        return "Chirp / チープ";
+        return "Chirp / びっくり";
     case GestureKind::Whine:
-        return "Whine / うなり";
+        return "Whine / 不安";
     }
     return "?";
 }

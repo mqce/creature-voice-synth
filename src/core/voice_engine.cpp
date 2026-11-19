@@ -24,7 +24,9 @@ VoiceEngine::VoiceEngine(float sample_rate)
 
     pitch_sm_.set_time_sec(0.008f, sample_rate_);
     breath_sm_.set_time_sec(0.015f, sample_rate_);
-    mouth_sm_.set_time_sec(0.010f, sample_rate_);
+    f1_sm_.set_time_sec(0.010f, sample_rate_);
+    f2_sm_.set_time_sec(0.010f, sample_rate_);
+    f3_sm_.set_time_sec(0.010f, sample_rate_);
     jitter_sm_.set_time_sec(0.020f, sample_rate_);
     amp_sm_.set_time_sec(0.005f, sample_rate_);
     oq_sm_.set_time_sec(0.012f, sample_rate_);
@@ -34,16 +36,16 @@ VoiceEngine::VoiceEngine(float sample_rate)
     const VoiceParams d{};
     pitch_sm_.snap(d.pitch_hz);
     breath_sm_.snap(d.breath);
-    mouth_sm_.snap(d.mouth);
+    f1_sm_.snap(d.f1);
+    f2_sm_.snap(d.f2);
+    f3_sm_.snap(d.f3);
     jitter_sm_.snap(d.jitter);
     amp_sm_.snap(0.f);
     oq_sm_.snap(d.open_quotient);
     nasal_sm_.snap(d.nasality);
     rough_sm_.snap(d.roughness);
 
-    float f1, f2, f3, f4;
-    map_mouth(d.mouth, f1, f2, f3, f4);
-    formants_.set_formants(f1, f2, f3, f4, 1);
+    formants_.set_formants(d.f1, d.f2, d.f3, std::max(4870.f, d.f3 + 900.f), 1);
     formants_.set_nasal(d.nasality, 1);
 }
 
@@ -57,25 +59,15 @@ void VoiceEngine::set_playing(bool playing) {
     playing_.store(playing, std::memory_order_release);
 }
 
-void VoiceEngine::map_mouth(float mouth, float& f1, float& f2, float& f3, float& f4) const {
-    mouth = std::clamp(mouth, 0.f, 1.f);
-    f1 = 650.f + mouth * 470.f;     // ~650–1120
-    f2 = 2480.f - mouth * 660.f;    // ~2480–1820
-    f3 = 3575.f + mouth * 80.f;
-    f4 = 4870.f;
-}
-
-void VoiceEngine::maybe_update_formants(float mouth, float nasality) {
-    float f1, f2, f3, f4;
-    map_mouth(mouth, f1, f2, f3, f4);
-    formants_.set_formants(f1, f2, f3, f4, frame_len_);
+void VoiceEngine::maybe_update_formants(float f1, float f2, float f3, float nasality) {
+    formants_.set_formants(f1, f2, f3, std::max(4870.f, f3 + 900.f), frame_len_);
     formants_.set_nasal(nasality, frame_len_);
 }
 
 float VoiceEngine::tick(const VoiceParams& target) {
     if (samples_in_frame_ >= frame_len_) {
         samples_in_frame_ = 0;
-        maybe_update_formants(mouth_sm_.value(), nasal_sm_.value());
+        maybe_update_formants(f1_sm_.value(), f2_sm_.value(), f3_sm_.value(), nasal_sm_.value());
     }
     ++samples_in_frame_;
 
@@ -84,7 +76,9 @@ float VoiceEngine::tick(const VoiceParams& target) {
 
     const float pitch = pitch_sm_.process(target.pitch_hz);
     const float breath = breath_sm_.process(target.breath);
-    mouth_sm_.process(target.mouth);
+    f1_sm_.process(target.f1);
+    f2_sm_.process(target.f2);
+    f3_sm_.process(target.f3);
     const float jitter = jitter_sm_.process(target.jitter);
     const float amp = amp_sm_.process(amp_target);
     const float oq = oq_sm_.process(target.open_quotient);

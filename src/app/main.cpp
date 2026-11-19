@@ -2,6 +2,7 @@
 #include "gesture.hpp"
 #include "gesture_player.hpp"
 #include "voice_engine.hpp"
+#include "vowel.hpp"
 
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
@@ -174,6 +175,30 @@ int run_check() {
         render_player(eng, pl, b.data(), n);
         write_wav_s16("check_excited.wav", b.data(), n, kSampleRate);
         std::printf("wrote check_sad.wav check_speak.wav check_coo.wav check_whine.wav check_excited.wav\n");
+
+        std::vector<float> au(static_cast<std::size_t>(n));
+        std::vector<float> ai(static_cast<std::size_t>(n));
+        pl.trigger_diphthong(VowelKind::A, VowelKind::U);
+        render_player(eng, pl, au.data(), n);
+        write_wav_s16("check_au.wav", au.data(), n, kSampleRate);
+        pl.trigger_diphthong(VowelKind::A, VowelKind::I);
+        render_player(eng, pl, ai.data(), n);
+        write_wav_s16("check_ai.wav", ai.data(), n, kSampleRate);
+        float diph_diff = 0.f;
+        for (int i = 0; i < n; ++i) {
+            diph_diff = std::max(diph_diff, std::abs(au[static_cast<std::size_t>(i)] -
+                                                     ai[static_cast<std::size_t>(i)]));
+        }
+        const Stats sau = measure(au.data(), n, tail);
+        std::printf("diphthong_au: nan/inf=%d peak=%.4f rms=%.4f tail_rms=%.4f\n", sau.bad, sau.peak,
+                    sau.rms, sau.tail_rms);
+        std::printf("diphthong_au_vs_ai_peak=%.4f\n", diph_diff);
+        std::printf("wrote check_au.wav check_ai.wav\n");
+        if (sau.bad > 0 || sau.peak < 0.02f || sau.peak > 0.98f || sau.tail_rms > 0.02f ||
+            diph_diff < 0.02f) {
+            std::fprintf(stderr, "check failed: diphthong path\n");
+            return 1;
+        }
     }
 
     if (sa.bad > 0 || sb.bad > 0 || sa.peak < 0.02f || sb.peak < 0.02f || sa.peak > 0.98f ||
@@ -220,7 +245,7 @@ int main(int argc, char** argv) {
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
-    GLFWwindow* window = glfwCreateWindow(560, 640, "Creature Voice", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(560, 720, "Creature Voice", nullptr, nullptr);
     if (!window) {
         std::fprintf(stderr, "glfwCreateWindow failed\n");
         glfwTerminate();
@@ -261,6 +286,9 @@ int main(int argc, char** argv) {
     GesturePlayer player(static_cast<float>(kSampleRate));
     VoiceParams drone_params;
     drone_params.amplitude = 1.f;
+    int drone_vowel = 0;
+    int diphthong_from = 0;
+    int diphthong_to = 2;
     Emotion emotion;
     bool drone_mode = false;
     bool playing = true;
@@ -343,6 +371,23 @@ int main(int argc, char** argv) {
             }
         }
 
+        ImGui::Separator();
+        ImGui::TextUnformatted("Diphthong / 二重母音");
+        const char* vowel_items[] = {"あ", "い", "う", "え", "お"};
+        ImGui::SetNextItemWidth(160.f);
+        ImGui::Combo("From / 始", &diphthong_from, vowel_items, 5);
+        ImGui::SameLine();
+        ImGui::SetNextItemWidth(160.f);
+        ImGui::Combo("To / 終", &diphthong_to, vowel_items, 5);
+        if (ImGui::Button("Play diphthong / 二重母音を再生", ImVec2(-1.f, 0.f))) {
+            audio.mode.store(static_cast<int>(AppMode::Gesture), std::memory_order_release);
+            drone_mode = false;
+            const VowelKind from = vowel_from_index(diphthong_from);
+            const VowelKind to = vowel_from_index(diphthong_to);
+            player.trigger_diphthong(from, to);
+            status = std::string("played / 再生: ") + vowel_label(from) + vowel_label(to);
+        }
+
         if (ImGui::Button("Write utterance WAV / WAV書き出し")) {
             VoiceEngine offline(static_cast<float>(kSampleRate));
             GesturePlayer offline_player(static_cast<float>(kSampleRate));
@@ -372,7 +417,12 @@ int main(int argc, char** argv) {
             ImGui::BeginDisabled(!drone_mode);
             ImGui::SliderFloat("Pitch / 高さ", &drone_params.pitch_hz, 180.f, 1100.f, "%.0f Hz");
             ImGui::SliderFloat("Breath / 息", &drone_params.breath, 0.f, 1.f, "%.2f");
-            ImGui::SliderFloat("Mouth / 口", &drone_params.mouth, 0.f, 1.f, "%.2f");
+            if (ImGui::Combo("Vowel / 母音", &drone_vowel, vowel_items, 5)) {
+                const VowelFormants vf = vowel_formants(vowel_from_index(drone_vowel));
+                drone_params.f1 = vf.f1;
+                drone_params.f2 = vf.f2;
+                drone_params.f3 = vf.f3;
+            }
             ImGui::SliderFloat("Jitter / 揺らぎ", &drone_params.jitter, 0.f, 1.f, "%.2f");
             ImGui::SliderFloat("Open / 声門開度", &drone_params.open_quotient, 0.45f, 0.88f, "%.2f");
             ImGui::SliderFloat("Nasal / 鼻腔", &drone_params.nasality, 0.f, 1.f, "%.2f");
